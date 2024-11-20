@@ -1,6 +1,6 @@
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   Xander Estevez COMP272-002
  *
  *   This java file contains the problem solutions for the methods selectionSort,
  *   mergeSortDivisibleByKFirst, asteroidsDestroyed, and numRescueCanoes methods.
@@ -37,12 +37,26 @@ public class ProblemSolutions {
         int n = values.length;
 
         for (int i = 0; i < n - 1; i++) {
+            int selectedIdx = i;
 
-            // YOU CODE GOES HERE -- COMPLETE THE INNER LOOP OF THIS
-            // "SELECTION SORT" ALGORITHM.
-            // DO NOT FORGET TO ADD YOUR NAME / SECTION ABOVE
 
-        }
+                for (int j = i + 1; j < n; j++) {
+                    if (ascending && values[j] < values[selectedIdx]) {
+                        selectedIdx = j;
+                    } else if (!ascending && values[j] > values[selectedIdx]) {
+                        selectedIdx = j;
+                    }
+                }
+
+                // Swap only if a new minimum or maximum was found
+                if (selectedIdx != i) {
+                    int temp = values[selectedIdx];
+                    values[selectedIdx] = values[i];
+                    values[i] = temp;
+                }
+            }
+
+
 
     } // End class selectionSort
 
@@ -92,18 +106,39 @@ public class ProblemSolutions {
 
     private void mergeDivisbleByKFirst(int arr[], int k, int left, int mid, int right)
     {
-        // YOUR CODE GOES HERE, THIS METHOD IS NO MORE THAN THE STANDARD MERGE PORTION
-        // OF A MERGESORT, EXCEPT THE NUMBERS DIVISIBLE BY K MUST GO FIRST WITHIN THE
-        // SEQUENCE PER THE DISCUSSION IN THE PROLOGUE ABOVE.
-        //
-        // NOTE: YOU CAN PROGRAM THIS WITH A SPACE COMPLEXITY OF O(1) OR O(N LOG N).
-        // AGAIN, THIS IS REFERRING TO SPACE COMPLEXITY. O(1) IS IN-PLACE, O(N LOG N)
-        // ALLOCATES AUXILIARY DATA STRUCTURES (TEMPORARY ARRAYS). IT WILL BE EASIER
-        // TO CODE WITH A SPACE COMPLEXITY OF O(N LOG N), WHICH IS FINE FOR PURPOSES
-        // OF THIS PROGRAMMING EXERCISES.
+        int firstLeft = mid - left + 1;
+        int firstRight = right - mid;
 
-        return;
+        int[] leftArray = new int[firstLeft];
+        int[] rightArray = new int[firstRight];
 
+        System.arraycopy(arr, left, leftArray, 0, firstLeft);
+        System.arraycopy(arr, mid + 1, rightArray, 0, firstRight);
+
+        int i = 0;
+        int j = 0;
+        int merged = left;
+
+        while (i < firstLeft && leftArray[i] % k == 0) {
+            arr[merged++] = leftArray[i++];
+        }
+        while (j < firstRight && rightArray[j] % k == 0) {
+            arr[merged++] = rightArray[j++];
+        }
+        while (i < firstLeft && j < firstRight) {
+            if (leftArray[i] % k == 0 || (rightArray[j] % k != 0 && leftArray[i] <= rightArray[j])) {
+                arr[merged++] = leftArray[i++];
+            } else {
+                arr[merged++] = rightArray[j++];
+            }
+        }
+
+        while (i < firstLeft) {
+            arr[merged++] = leftArray[i++];
+        }
+        while (j < firstRight) {
+            arr[merged++] = rightArray[j++];
+        }
     }
 
 
@@ -154,9 +189,21 @@ public class ProblemSolutions {
 
     public static boolean asteroidsDestroyed(int mass, int[] asteroids) {
 
-        // YOUR CODE GOES HERE, CONSIDER USING ARRAYS.SORT()
+        Arrays.sort(asteroids);
 
-        return false;
+
+        long currentMass = mass;
+
+        for (int asteroid : asteroids) {
+
+            if (currentMass >= asteroid) {
+                currentMass += asteroid;
+            } else {
+                return false;
+            }
+        }
+
+        return true;
 
     }
 
@@ -192,10 +239,24 @@ public class ProblemSolutions {
 
     public static int numRescueSleds(int[] people, int limit) {
 
-        // YOUR CODE GOES HERE, CONSIDER USING ARRAYS.SORT
+        Arrays.sort(people);
 
-        return -1;
+        int left = 0;
+        int right = people.length - 1;
+        int sleds = 0;
 
+
+        while (left <= right) {
+
+            if (people[left] + people[right] <= limit) {
+                left++;
+            }
+
+            right--;
+            sleds++;
+        }
+
+        return sleds;
     }
 
 } // End Class ProblemSolutions
